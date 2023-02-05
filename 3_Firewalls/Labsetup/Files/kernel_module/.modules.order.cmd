@@ -1,0 +1,1 @@
+cmd_/home/same/uni/magistrale/secondo_anno/ethical_hacking/lab3/Labsetup/Files/kernel_module/modules.order := {   echo /home/same/uni/magistrale/secondo_anno/ethical_hacking/lab3/Labsetup/Files/kernel_module/hello.ko; :; } | awk '!x[$$0]++' - > /home/same/uni/magistrale/secondo_anno/ethical_hacking/lab3/Labsetup/Files/kernel_module/modules.order

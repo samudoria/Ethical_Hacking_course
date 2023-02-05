@@ -1,0 +1,16 @@
+|       buffer[517]		        | *0xffffc2c8    -|
+|		 shellcode				|                 |->112 byte
+|		 shellcode				|                 |
+|	*frame pointer* shellcode   | *0xffffc338    -|  
+|		 shellcode				|<------------------|#ret# *0xffffc2c8-len(shellcode)
+|			NOP					|					|
+|	        NOP                 |					|
+|	   *return address*    		|-------------------|	
+|			NOP					|
+|			NOP					|					
+|			NOP					|					
+|	  	  buffer[0]		  	   	|							   
+|_______________________________|
+
+
+|----NOP-----||---ret---||----NOP----||-----shellcode-----|

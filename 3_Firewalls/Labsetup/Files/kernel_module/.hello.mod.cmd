@@ -1,0 +1,1 @@
+cmd_/home/same/uni/magistrale/secondo_anno/ethical_hacking/lab3/Labsetup/Files/kernel_module/hello.mod := { echo  /home/same/uni/magistrale/secondo_anno/ethical_hacking/lab3/Labsetup/Files/kernel_module/hello.o;  echo; } > /home/same/uni/magistrale/secondo_anno/ethical_hacking/lab3/Labsetup/Files/kernel_module/hello.mod
